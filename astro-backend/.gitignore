@@ -1,0 +1,57 @@
+# Build Folders
+bin/
+obj/
+out/
+
+# User-Specific Files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Auto-generated Files
+*.generated.cs
+*.Designer.cs
+
+# Logs
+*.log
+
+# Environment Variables and Secrets
+.env
+.env.*
+
+# Visual Studio specific files
+.vscode/
+.vs/
+.vscode/settings.json
+
+# Rider specific files
+.idea/
+
+# macOS Files
+.DS_Store
+
+# Windows image file caches
+Thumbs.db
+
+# NuGet Packages
+*.nupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# DotNet Framework Source Control
+$tf/
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Rider
+.idea/
+
+# Ignore Docker files
+**/[Dd]ocker-compose.*
+**/[Dd]ockerfile*

@@ -1,0 +1,6 @@
+@astro_backend_HostAddress = http://localhost:5122
+
+GET {{astro_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
