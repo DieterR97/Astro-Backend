@@ -2,7 +2,7 @@ using System;
 using astro_backend.models;
 using Microsoft.EntityFrameworkCore;
 
-namespace astro_backend.data;
+namespace astro_backend;
 
 public class AppDbContext : DbContext
 {
@@ -57,6 +57,5 @@ public class AppDbContext : DbContext
             .HasForeignKey(t => t.to_account_id)
             .OnDelete(DeleteBehavior.Restrict);
     }
-
 
 }
