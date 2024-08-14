@@ -31,8 +31,16 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+
 // Add SendGrid as service
-builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
+// builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
+var ApiKey = Environment.GetEnvironmentVariable("SENDGRID_APIKEY");
+var FromEmail = Environment.GetEnvironmentVariable("SENDGRID_FROMEMAIL");
+builder.Services.Configure<SendGridOptions>(options =>
+{
+    options.ApiKey = ApiKey;
+    options.FromEmail = FromEmail;
+});
 builder.Services.AddSingleton<EmailSender>();
 
 var app = builder.Build();
