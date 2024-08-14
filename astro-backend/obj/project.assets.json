@@ -12711,19 +12711,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\diete\\.nuget\\packages\\": {}
+    "C:\\Users\\hanna\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\astro-backend.csproj",
+      "projectUniqueName": "C:\\Users\\hanna\\OneDrive\\Desktop\\Astro backend\\Astro-Backend\\astro-backend\\astro-backend.csproj",
       "projectName": "astro-backend",
-      "projectPath": "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\astro-backend.csproj",
-      "packagesPath": "C:\\Users\\diete\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\obj\\",
+      "projectPath": "C:\\Users\\hanna\\OneDrive\\Desktop\\Astro backend\\Astro-Backend\\astro-backend\\astro-backend.csproj",
+      "packagesPath": "C:\\Users\\hanna\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\hanna\\OneDrive\\Desktop\\Astro backend\\Astro-Backend\\astro-backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\diete\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\hanna\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -12816,7 +12816,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

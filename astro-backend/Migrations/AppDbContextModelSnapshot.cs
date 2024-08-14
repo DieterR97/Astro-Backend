@@ -154,6 +154,12 @@ namespace astro_backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("user_id"));
 
+                    b.Property<string>("Otp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("OtpExpiry")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("timestamp with time zone");
 
