@@ -5,6 +5,9 @@ using astro_backend;
 // using astro_backend.data;
 using astro_backend.Services;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +45,33 @@ builder.Services.Configure<SendGridOptions>(options =>
     options.FromEmail = FromEmail;
 });
 builder.Services.AddSingleton<EmailSender>();
+
+// JWT configuration
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        // ValidateIssuer = true,
+        ValidateIssuer = false,
+        // ValidateAudience = true,
+        // ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        // ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+        // ClockSkew = TimeSpan.Zero // Reduce the allowed clock skew (default is 5 mins)
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -93,9 +123,14 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
+
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
