@@ -47,25 +47,26 @@ namespace astro_backend.Controllers
         }
 
 
-        //TODO: API to generate and save the OTP (send the email) - login
-        [HttpPost("generate—otp")]
-        public async Task<IActionResult> GenerateOtp(string email)
+        //TODO: API to generate and save the OTP (send the email)
+        [HttpPost("generate-otp")]
+        public async Task<IActionResult> GenerateOtp([FromBody] string email)
         {
-            //Check to make sure that this email exists as a user in our table
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Email is required");
+            }
+
             var user = await _context.Users.SingleOrDefaultAsync(u => u.email == email);
             if (user == null) return NotFound("User not found");
 
-            user.GenerateOTP(); //Call the functionality and save it for the user that we found in the object
-            await _context.SaveChangesAsync(); //sync the new data to our tables in the db
+            user.GenerateOTP();
+            await _context.SaveChangesAsync();
 
             var otpMsg = $"Your OTP is {user.Otp}. It will expire in 5 min.";
+            await _emailSender.SendEmailAsync(user.email, otpMsg, "One Time Pin for Astro");
 
-            await _emailSender.SendEmailAsync(user.email, otpMsg, "One Time Pin for Astro"); //sending otp via email
-
-            //encrypt otp before saving
-            //TODO SELF: encrypt the OTP - Argon2 (own research)
-
-            return Ok("OTP Sent.");
+            // return Ok("OTP Sent.");
+            return Ok(new { message = "OTP Sent." });
         }
 
 
@@ -161,64 +162,73 @@ namespace astro_backend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterDto dto)
         {
-            // Check if the email or username already exists
-            if (await _context.Users.AnyAsync(u => u.email == dto.Email || u.username == dto.Username))
+            try
             {
-                return BadRequest("Email or username already taken");
+                // Check if the email or username already exists
+                if (await _context.Users.AnyAsync(u => u.email == dto.Email || u.username == dto.Username))
+                {
+                    return BadRequest(new { message = "Email or username already taken" });
+                }
+
+                // Hash the password using Argon2
+                var argon2 = new Argon2Hash(dto.Password);
+                var hashedPassword = argon2.Hash();
+
+                // Create user
+                var user = new User
+                {
+                    username = dto.Username,
+                    email = dto.Email,
+                    role = "user",
+                    created_at = DateTime.UtcNow
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Generate and send OTP
+                user.GenerateOTP(); //Call the functionality and save it for the user that we found in the object
+                await _context.SaveChangesAsync(); //sync the new data to our tables in the db
+
+                // Create associated User_security record
+                var userSecurity = new User_security
+                {
+                    user_id = user.user_id,
+                    password_hash = hashedPassword,
+                    latest_otp_secret = user.Otp,
+                    updated_at = DateTime.UtcNow
+                };
+
+                _context.User_securitys.Add(userSecurity);
+
+                // Create associated Account record
+                var account = new Account
+                {
+                    user_id = user.user_id,
+                    account_status_id = 1, // Default status for new accounts
+                    balance = 0,
+                    active = true
+                };
+
+                _context.Accounts.Add(account);
+                await _context.SaveChangesAsync();
+
+                // Generate and send OTP
+                //// user.GenerateOTP(); //Call the functionality and save it for the user that we found in the object
+                // await _context.SaveChangesAsync(); //sync the new data to our tables in the db
+                await _emailSender.SendEmailAsync(user.email, $"Your OTP is {user.Otp}. It will expire in 5 min.", "OTP for Astro Registration"); //sending otp via email
+
+                // return Ok("Registration successful. Please verify your OTP.");
+                return Ok(new { message = "Registration successful. Please verify your OTP." });
+
+                //encrypt otp before saving
+                //TODO SELF: encrypt the OTP - Argon2 (own research)
             }
-
-            // Hash the password using Argon2
-            var argon2 = new Argon2Hash(dto.Password);
-            var hashedPassword = argon2.Hash();
-
-            // Create user
-            var user = new User
+            catch (Exception ex)
             {
-                username = dto.Username,
-                email = dto.Email,
-                role = "user",
-                created_at = DateTime.UtcNow
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            // Generate and send OTP
-            user.GenerateOTP(); //Call the functionality and save it for the user that we found in the object
-            await _context.SaveChangesAsync(); //sync the new data to our tables in the db
-
-            // Create associated User_security record
-            var userSecurity = new User_security
-            {
-                user_id = user.user_id,
-                password_hash = hashedPassword,
-                latest_otp_secret = user.Otp,
-                updated_at = DateTime.UtcNow
-            };
-
-            _context.User_securitys.Add(userSecurity);
-
-            // Create associated Account record
-            var account = new Account
-            {
-                user_id = user.user_id,
-                account_status_id = 1, // Default status for new accounts
-                balance = 0,
-                active = true
-            };
-
-            _context.Accounts.Add(account);
-            await _context.SaveChangesAsync();
-
-            // Generate and send OTP
-            //// user.GenerateOTP(); //Call the functionality and save it for the user that we found in the object
-            // await _context.SaveChangesAsync(); //sync the new data to our tables in the db
-            await _emailSender.SendEmailAsync(user.email, $"Your OTP is {user.Otp}. It will expire in 5 min.", "OTP for Astro Registration"); //sending otp via email
-
-            return Ok("Registration successful. Please verify your OTP.");
-
-            //encrypt otp before saving
-            //TODO SELF: encrypt the OTP - Argon2 (own research)
+                // Log the exception if necessary
+                return StatusCode(500, new { message = "An error occurred during registration. Please try again." });
+            }
         }
 
 
