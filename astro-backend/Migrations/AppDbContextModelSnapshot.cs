@@ -52,6 +52,38 @@ namespace astro_backend.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("astro_backend.models.Asset", b =>
+                {
+                    b.Property<int>("asset_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("asset_id"));
+
+                    b.Property<string>("abbreviation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("account_id")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("asset_id");
+
+                    b.HasIndex("account_id");
+
+                    b.ToTable("Assets");
+                });
+
             modelBuilder.Entity("astro_backend.models.Authentication_log", b =>
                 {
                     b.Property<int>("log_id")
@@ -229,6 +261,17 @@ namespace astro_backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("astro_backend.models.Asset", b =>
+                {
+                    b.HasOne("astro_backend.models.Account", "Account")
+                        .WithMany("Assets")
+                        .HasForeignKey("account_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("astro_backend.models.Authentication_log", b =>
                 {
                     b.HasOne("astro_backend.models.User", "User")
@@ -272,6 +315,8 @@ namespace astro_backend.Migrations
 
             modelBuilder.Entity("astro_backend.models.Account", b =>
                 {
+                    b.Navigation("Assets");
+
                     b.Navigation("TransactionsFrom");
 
                     b.Navigation("TransactionsTo");

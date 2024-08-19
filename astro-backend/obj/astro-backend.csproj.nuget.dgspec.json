@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\astro-backend.csproj": {}
+    "c:\\Users\\erikc\\Desktop\\Project\\Astro-Backend\\astro-backend\\astro-backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\astro-backend.csproj": {
+    "c:\\Users\\erikc\\Desktop\\Project\\Astro-Backend\\astro-backend\\astro-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\astro-backend.csproj",
+        "projectUniqueName": "c:\\Users\\erikc\\Desktop\\Project\\Astro-Backend\\astro-backend\\astro-backend.csproj",
         "projectName": "astro-backend",
-        "projectPath": "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\astro-backend.csproj",
-        "packagesPath": "C:\\Users\\diete\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\diete\\Documents\\Visual Studio Projects\\Year 03\\Term 03\\Astro Backend\\Astro-Backend\\astro-backend\\obj\\",
+        "projectPath": "c:\\Users\\erikc\\Desktop\\Project\\Astro-Backend\\astro-backend\\astro-backend.csproj",
+        "packagesPath": "C:\\Users\\erikc\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\erikc\\Desktop\\Project\\Astro-Backend\\astro-backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\diete\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\erikc\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -123,7 +123,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
