@@ -34,4 +34,11 @@ public class Account
     public ICollection<Transaction>? TransactionsFrom { get; set; }
     public ICollection<Transaction>? TransactionsTo { get; set; }
 
+    public ICollection<Asset> Assets { get; set; } = new List<Asset>();
+
+    public decimal GetTotalBalance()
+    {
+        return Assets.Sum(asset => asset.price * asset.amount);
+    }
+
 }

@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<User_security> User_securitys { get; set; }
+    public DbSet<Asset> Assets { get; set; }
 
     //build relationships between our tables/entities
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,6 +55,11 @@ public class AppDbContext : DbContext
             .WithMany(a => a.TransactionsTo)
             .HasForeignKey(t => t.to_account_id)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Account>()
+            .HasMany(a => a.Assets)
+            .WithOne(a => a.Account)
+            .HasForeignKey(a => a.account_id);
     }
 
 }

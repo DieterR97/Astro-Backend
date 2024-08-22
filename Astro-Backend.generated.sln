@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
+<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astro-backend", "astro-backend\astro-backend.csproj", "{41447EAF-564F-42CF-870C-DE565F38E552}"
+=======
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "astro-backend", "astro-backend\astro-backend.csproj", "{548B7A48-DE47-4DCC-8A10-6BB88A3D0B6C}"
+>>>>>>> 8e4b562048538354dc2e4c6cad002ae01ed67a1b
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +15,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+<<<<<<< HEAD
 		{41447EAF-564F-42CF-870C-DE565F38E552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41447EAF-564F-42CF-870C-DE565F38E552}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41447EAF-564F-42CF-870C-DE565F38E552}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41447EAF-564F-42CF-870C-DE565F38E552}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+		{548B7A48-DE47-4DCC-8A10-6BB88A3D0B6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{548B7A48-DE47-4DCC-8A10-6BB88A3D0B6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{548B7A48-DE47-4DCC-8A10-6BB88A3D0B6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{548B7A48-DE47-4DCC-8A10-6BB88A3D0B6C}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> 8e4b562048538354dc2e4c6cad002ae01ed67a1b
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
