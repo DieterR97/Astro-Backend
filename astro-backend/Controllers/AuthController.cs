@@ -200,6 +200,7 @@ namespace astro_backend.Controllers
                 };
 
                 _context.User_securitys.Add(userSecurity);
+                await _context.SaveChangesAsync();
 
                 // Create associated Account record
                 var account = new Account
