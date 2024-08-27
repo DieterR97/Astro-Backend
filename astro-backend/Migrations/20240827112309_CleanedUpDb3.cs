@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace astro_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CleanedUpDb2 : Migration
+    public partial class CleanedUpDb3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
