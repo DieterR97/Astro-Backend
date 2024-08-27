@@ -100,10 +100,10 @@ namespace astro_backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("login_time")
+                    b.Property<DateTime?>("login_time")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("logout_time")
+                    b.Property<DateTime?>("logout_time")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("user_id")

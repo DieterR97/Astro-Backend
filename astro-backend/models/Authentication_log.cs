@@ -10,11 +10,9 @@ public class Authentication_log
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int log_id { get; set; }
 
-    [Required]
-    public DateTime login_time { get; set; }
+    public DateTime? login_time { get; set; }
 
-    [Required]
-    public DateTime logout_time { get; set; }
+    public DateTime? logout_time { get; set; }
 
     [Required]
     public string ip_address { get; set; }

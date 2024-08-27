@@ -11,6 +11,8 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace astro_backend.Controllers
 {
@@ -69,29 +71,6 @@ namespace astro_backend.Controllers
             return Ok(new { message = "OTP Sent." });
         }
 
-
-        // //TODO: API validate if the user has entered the correct OTP
-        // [HttpPost("validate—otp")]
-        // public async Task<IActionResult> ValidateOtp(OtpEmail otpEmail)
-        // {
-        //     //Check to make sure that this email exists as a user in our table
-        //     var user = await _context.Users.SingleOrDefaultAsync(u => u.email == otpEmail.Email);
-        //     if (user == null) return NotFound("User not found");
-
-        //     if (user.ValidateOTP(otpEmail.Otp))
-        //     {
-        //         //valid otp
-        //         // TODO self (optional): JWT - pass the token here
-        //         return Ok("OTP is valid. Let me into the site.");
-        //     }
-        //     else
-        //     {
-        //         return BadRequest("Invalid OTP.");
-        //     }
-
-        // }
-
-
         private string GenerateJwtToken(User user)
         {
             // var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -135,7 +114,6 @@ namespace astro_backend.Controllers
             }
         }
 
-
         [HttpPost("validate-otp")]
         public async Task<IActionResult> ValidateOtp(OtpEmail otpEmail)
         {
@@ -144,11 +122,28 @@ namespace astro_backend.Controllers
 
             if (user.ValidateOTP(otpEmail.Otp))
             {
-                // Send welcome email
-                await _emailSender.SendEmailAsync(user.email, "Welcome to Astro!", "Welcome email content...");
+                // Log the successful OTP validation
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+                var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
 
-                // Log the user in (e.g., generate JWT)
+                var authLog = new Authentication_log
+                {
+                    login_time = DateTime.UtcNow,
+                    logout_time = null, // Set to null since the user is currently logged in
+                    ip_address = ipAddress,
+                    device_info = deviceInfo,
+                    user_id = user.user_id
+                };
+
+                _context.Authentication_logs.Add(authLog);
+                await _context.SaveChangesAsync();
+
+                // Send welcome email
+                // await _emailSender.SendEmailAsync(user.email, "Welcome to Astro!", "Welcome email content...");
+
+                // Generate JWT token
                 var token = GenerateJwtToken(user);
+                Console.WriteLine($"Generated Token: {token}");
 
                 return Ok(new { message = "OTP is valid. You are now logged in.", token });
             }
@@ -157,7 +152,6 @@ namespace astro_backend.Controllers
                 return BadRequest("Invalid OTP.");
             }
         }
-
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterDto dto)
@@ -214,9 +208,6 @@ namespace astro_backend.Controllers
                 _context.Accounts.Add(account);
                 await _context.SaveChangesAsync();
 
-                // Generate and send OTP
-                //// user.GenerateOTP(); //Call the functionality and save it for the user that we found in the object
-                // await _context.SaveChangesAsync(); //sync the new data to our tables in the db
                 await _emailSender.SendEmailAsync(user.email, $"Your OTP is {user.Otp}. It will expire in 5 min.", "OTP for Astro Registration"); //sending otp via email
 
                 // return Ok("Registration successful. Please verify your OTP.");
@@ -232,11 +223,9 @@ namespace astro_backend.Controllers
             }
         }
 
-
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginDto dto)
         {
-
             // Check the dto
             if (dto == null)
             {
@@ -247,7 +236,6 @@ namespace astro_backend.Controllers
             {
                 return BadRequest("Email and password are required");
             }
-
 
             // Check if user exists
             var user = await _context.Users.SingleOrDefaultAsync(u => u.email == dto.Email);
@@ -263,23 +251,117 @@ namespace astro_backend.Controllers
             if (!VerifyPassword(dto.Password, userSecurity.password_hash))
                 return Unauthorized("Invalid credentials");
 
-            // Generate JWT token
-            var token = GenerateJwtToken(user);
+            // Log the login attempt
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
+            var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
 
-            // Log authentication details
-            var authLog = new Authentication_log
-            {
-                login_time = DateTime.UtcNow,
-                logout_time = DateTime.MinValue, // Assume not logged out yet
-                ip_address = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
-                device_info = HttpContext.Request.Headers["User-Agent"].ToString(),
-                user_id = user.user_id
-            };
+            // var authLog = new Authentication_log
+            // {
+            //     login_time = DateTime.UtcNow,
+            //     logout_time = null, // Set to null since the user is currently logged in
+            //     ip_address = ipAddress,
+            //     device_info = deviceInfo,
+            //     user_id = user.user_id
+            // };
 
-            _context.Authentication_logs.Add(authLog);
+            // _context.Authentication_logs.Add(authLog);
+            // await _context.SaveChangesAsync();
+
+            // Generate OTP
+            user.GenerateOTP();
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Login successful", token });
+            // Send OTP email
+            await _emailSender.SendEmailAsync(user.email, $"Your OTP is {user.Otp}. It will expire in 5 minutes.", "OTP for Astro Login");
+
+            // Respond to front end to redirect to OTP verification
+            return Ok(new { message = "Login successful. Please verify your OTP." });
+        }
+
+        // [HttpPost("logout")]
+        // public async Task<IActionResult> Logout()
+        // {
+        //     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //     if (userId == null)
+        //     {
+        //         // Log the claims for debugging
+        //         var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+        //         Console.WriteLine("Claims: " + JsonConvert.SerializeObject(claims));
+
+        //         return Unauthorized("User not logged in.");
+        //     }
+
+        //     // Find the latest authentication log for the user
+        //     var authLog = await _context.Authentication_logs
+        //         .Where(log => log.user_id == int.Parse(userId))
+        //         .OrderByDescending(log => log.login_time)
+        //         .FirstOrDefaultAsync();
+
+        //     if (authLog == null)
+        //     {
+        //         return NotFound("No authentication log found for the user.");
+        //     }
+
+        //     // Update the logout time
+        //     authLog.logout_time = DateTime.UtcNow;
+        //     await _context.SaveChangesAsync();
+
+        //     return Ok(new { message = "Logout successful." });
+        // }
+
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] EmailRequest emailRequest)
+        {
+            if (emailRequest == null || string.IsNullOrEmpty(emailRequest.Email))
+            {
+                return BadRequest(new { message = "Invalid request payload." });
+            }
+
+            try
+            {
+                var user = await _context.Users.SingleOrDefaultAsync(u => u.email == emailRequest.Email);
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found." });
+                }
+
+                var authLog = await _context.Authentication_logs
+                    .Where(log => log.user_id == user.user_id)
+                    .OrderByDescending(log => log.login_time)
+                    .FirstOrDefaultAsync();
+
+                if (authLog == null)
+                {
+                    return NotFound(new { message = "No authentication log found for the user." });
+                }
+
+                // Log the current value of logout_time for debugging
+                Console.WriteLine($"Current logout_time value: {authLog.logout_time}");
+
+                // Update the logout time
+                authLog.logout_time = DateTime.UtcNow;
+
+                // Log the updated value of logout_time
+                Console.WriteLine($"Updated logout_time value: {authLog.logout_time}");
+
+                // Save changes
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Logout successful." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details
+                Console.WriteLine($"Exception during logout: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred during logout.", details = ex.Message });
+            }
+        }
+
+
+        public class EmailRequest
+        {
+            public string Email { get; set; }
         }
 
 
