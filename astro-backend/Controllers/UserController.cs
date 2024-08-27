@@ -104,5 +104,43 @@ namespace astro_backend.Controllers
         {
             return _context.Users.Any(e => e.user_id == id);
         }
+
+        [HttpGet("email")]
+        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+        {
+            var user = await _context.Users
+                                      .Include(u => u.Account)
+                                      .ThenInclude(a => a.Assets) // Including assets if needed
+                                      .Where(u => u.email == email)
+                                      .Select(u => new UserDto
+                                      {
+                                          Username = u.username,
+                                          Email = u.email,
+                                          Account = new AccountDto
+                                          {
+                                              AccountId = u.Account.account_id,
+                                              Balance = u.Account.balance,
+                                              Assets = u.Account.Assets.Select(asset => new AssetDto
+                                              {
+                                                  AssetId = asset.asset_id,
+                                                  Name = asset.name,
+                                                  Abbreviation = asset.abbreviation,
+                                                  Price = asset.price,
+                                                  Amount = asset.amount
+                                              }).ToList()
+                                          }
+                                      })
+                                      .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+
+
     }
 }
