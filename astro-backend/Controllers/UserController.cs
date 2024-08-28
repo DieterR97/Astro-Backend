@@ -114,6 +114,7 @@ namespace astro_backend.Controllers
                                       .Include(u => u.Account.Status)
                                       .Include(u => u.Account.TransactionsFrom)
                                       .Include(u => u.Account.TransactionsTo)
+                                      .Include(u => u.Account.Astro)
                                       .FirstOrDefaultAsync(u => u.email == email);
 
             if (user == null)
@@ -121,12 +122,18 @@ namespace astro_backend.Controllers
                 return NotFound();
             }
 
-            // Calculate the total balance based on the assets
-            user.Account.balance = user.Account.Assets.Sum(asset => asset.price * asset.amount);
+            // Calculate the total balance based on both assets and Astro tokens
+            var totalAssetBalance = user.Account.Assets.Sum(asset => asset.price * asset.tokens);
+            var totalAstroBalance = user.Account.Astro != null ? user.Account.Astro.tokens * user.Account.Astro.tokens : 0;
+
+            user.Account.balance = totalAssetBalance + totalAstroBalance;
 
             // Save the updated balance to the database
             _context.Accounts.Update(user.Account);
             await _context.SaveChangesAsync();
+
+            // Combine TransactionsFrom and TransactionsTo into one Transactions list
+            var allTransactions = user.Account.TransactionsFrom.Concat(user.Account.TransactionsTo).ToList();
 
             // Return the user data as a DTO
             var userDto = new UserDto
@@ -139,22 +146,39 @@ namespace astro_backend.Controllers
                     Balance = user.Account.balance,
                     Active = user.Account.active,
                     Account_status_id = user.Account.account_status_id,
-                    Status = user.Account.Status,
+                    Status = user.Account.Status != null ? new StatusDto
+                    {
+                        StatusId = user.Account.Status.status_id,
+                        StatusName = user.Account.Status.status_name,
+                        TotalAmountCriteria = user.Account.Status.total_amount_criteria,
+                        TransactionsCriteria = user.Account.Status.transactions_criteria,
+                        AnnualInterestRate = user.Account.Status.annual_interest_rate,
+                        TransactionFee = user.Account.Status.transaction_fee
+                    } : null,
+                    TotalTransactions = user.Account.total_transactions,
+                    Astro = user.Account.Astro != null ? new AstroDto
+                    {
+                        AstroId = user.Account.Astro.astro_id,
+                        Name = user.Account.Astro.name,
+                        Abbreviation = user.Account.Astro.abbreviation,
+                        Price = user.Account.Astro.price,
+                        Tokens = user.Account.Astro.tokens
+                    } : null,
                     Assets = user.Account.Assets.Select(asset => new AssetDto
                     {
                         AssetId = asset.asset_id,
                         Name = asset.name,
                         Abbreviation = asset.abbreviation,
                         Price = asset.price,
-                        Amount = asset.amount
+                        Tokens = asset.tokens
                     }).ToList(),
-                    TransactionsFrom = user.Account.TransactionsFrom.ToList(),
-                    TransactionsTo = user.Account.TransactionsTo.ToList()
+                     Transactions = allTransactions
                 }
             };
 
             return userDto;
         }
+
 
 
 
