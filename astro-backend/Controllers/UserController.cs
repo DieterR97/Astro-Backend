@@ -111,6 +111,9 @@ namespace astro_backend.Controllers
             var user = await _context.Users
                                       .Include(u => u.Account)
                                       .ThenInclude(a => a.Assets) // Including assets if needed
+                                      .Include(u => u.Account.Status)
+                                      .Include(u => u.Account.TransactionsFrom)
+                                        .Include(u => u.Account.TransactionsTo)
                                       .Where(u => u.email == email)
                                       .Select(u => new UserDto
                                       {
@@ -120,6 +123,9 @@ namespace astro_backend.Controllers
                                           {
                                               AccountId = u.Account.account_id,
                                               Balance = u.Account.balance,
+                                              Active = u.Account.active,
+                                              Account_status_id = u.Account.account_status_id,
+                                              Status = u.Account.Status,
                                               Assets = u.Account.Assets.Select(asset => new AssetDto
                                               {
                                                   AssetId = asset.asset_id,
@@ -127,7 +133,9 @@ namespace astro_backend.Controllers
                                                   Abbreviation = asset.abbreviation,
                                                   Price = asset.price,
                                                   Amount = asset.amount
-                                              }).ToList()
+                                              }).ToList(),
+                                              TransactionsFrom = u.Account.TransactionsFrom.ToList(),
+                                              TransactionsTo = u.Account.TransactionsTo.ToList()
                                           }
                                       })
                                       .FirstOrDefaultAsync();
