@@ -105,5 +105,29 @@ namespace astro_backend.Controllers
             return _context.Accounts.Any(e => e.account_id == id);
         }
 
+        [HttpPut("upgradeStatus")]
+        public async Task<IActionResult> UpgradeAccountStatus([FromBody] UpgradeAccountStatusRequest request)
+        {
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.account_id == request.accountId);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            account.account_status_id = request.newStatusId;
+
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        public class UpgradeAccountStatusRequest
+        {
+            public int accountId { get; set; }
+            public int newStatusId { get; set; }
+        }
+
     }
 }

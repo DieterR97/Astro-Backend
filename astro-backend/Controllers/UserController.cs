@@ -110,43 +110,52 @@ namespace astro_backend.Controllers
         {
             var user = await _context.Users
                                       .Include(u => u.Account)
-                                      .ThenInclude(a => a.Assets) // Including assets if needed
+                                      .ThenInclude(a => a.Assets) // Including assets to calculate balance
                                       .Include(u => u.Account.Status)
                                       .Include(u => u.Account.TransactionsFrom)
-                                        .Include(u => u.Account.TransactionsTo)
-                                      .Where(u => u.email == email)
-                                      .Select(u => new UserDto
-                                      {
-                                          Username = u.username,
-                                          Email = u.email,
-                                          Account = new AccountDto
-                                          {
-                                              AccountId = u.Account.account_id,
-                                              Balance = u.Account.balance,
-                                              Active = u.Account.active,
-                                              Account_status_id = u.Account.account_status_id,
-                                              Status = u.Account.Status,
-                                              Assets = u.Account.Assets.Select(asset => new AssetDto
-                                              {
-                                                  AssetId = asset.asset_id,
-                                                  Name = asset.name,
-                                                  Abbreviation = asset.abbreviation,
-                                                  Price = asset.price,
-                                                  Amount = asset.amount
-                                              }).ToList(),
-                                              TransactionsFrom = u.Account.TransactionsFrom.ToList(),
-                                              TransactionsTo = u.Account.TransactionsTo.ToList()
-                                          }
-                                      })
-                                      .FirstOrDefaultAsync();
+                                      .Include(u => u.Account.TransactionsTo)
+                                      .FirstOrDefaultAsync(u => u.email == email);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            return user;
+            // Calculate the total balance based on the assets
+            user.Account.balance = user.Account.Assets.Sum(asset => asset.price * asset.amount);
+
+            // Save the updated balance to the database
+            _context.Accounts.Update(user.Account);
+            await _context.SaveChangesAsync();
+
+            // Return the user data as a DTO
+            var userDto = new UserDto
+            {
+                Username = user.username,
+                Email = user.email,
+                Account = new AccountDto
+                {
+                    AccountId = user.Account.account_id,
+                    Balance = user.Account.balance,
+                    Active = user.Account.active,
+                    Account_status_id = user.Account.account_status_id,
+                    Status = user.Account.Status,
+                    Assets = user.Account.Assets.Select(asset => new AssetDto
+                    {
+                        AssetId = asset.asset_id,
+                        Name = asset.name,
+                        Abbreviation = asset.abbreviation,
+                        Price = asset.price,
+                        Amount = asset.amount
+                    }).ToList(),
+                    TransactionsFrom = user.Account.TransactionsFrom.ToList(),
+                    TransactionsTo = user.Account.TransactionsTo.ToList()
+                }
+            };
+
+            return userDto;
         }
+
 
 
 
