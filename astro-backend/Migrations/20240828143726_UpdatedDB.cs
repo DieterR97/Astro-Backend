@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace astro_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CleanedUpDb3 : Migration
+    public partial class UpdatedDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,8 @@ namespace astro_backend.Migrations
                     balance = table.Column<decimal>(type: "numeric", nullable: false),
                     active = table.Column<bool>(type: "boolean", nullable: false),
                     user_id = table.Column<int>(type: "integer", nullable: false),
-                    account_status_id = table.Column<int>(type: "integer", nullable: false)
+                    account_status_id = table.Column<int>(type: "integer", nullable: false),
+                    total_transactions = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,8 +129,9 @@ namespace astro_backend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
                     abbreviation = table.Column<string>(type: "text", nullable: false),
-                    price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    astro_price = table.Column<decimal>(type: "numeric", nullable: false),
+                    tokens = table.Column<decimal>(type: "numeric", nullable: false),
                     account_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -137,6 +139,29 @@ namespace astro_backend.Migrations
                     table.PrimaryKey("PK_Assets", x => x.asset_id);
                     table.ForeignKey(
                         name: "FK_Assets_Accounts_account_id",
+                        column: x => x.account_id,
+                        principalTable: "Accounts",
+                        principalColumn: "account_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Astros",
+                columns: table => new
+                {
+                    astro_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    abbreviation = table.Column<string>(type: "text", nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    tokens = table.Column<decimal>(type: "numeric", nullable: false),
+                    account_id = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Astros", x => x.astro_id);
+                    table.ForeignKey(
+                        name: "FK_Astros_Accounts_account_id",
                         column: x => x.account_id,
                         principalTable: "Accounts",
                         principalColumn: "account_id",
@@ -189,6 +214,12 @@ namespace astro_backend.Migrations
                 column: "account_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Astros_account_id",
+                table: "Astros",
+                column: "account_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Authentication_logs_user_id",
                 table: "Authentication_logs",
                 column: "user_id");
@@ -215,6 +246,9 @@ namespace astro_backend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Assets");
+
+            migrationBuilder.DropTable(
+                name: "Astros");
 
             migrationBuilder.DropTable(
                 name: "Authentication_logs");

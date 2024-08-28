@@ -208,6 +208,46 @@ namespace astro_backend.Controllers
                 _context.Accounts.Add(account);
                 await _context.SaveChangesAsync();
 
+
+                // Create Asset records
+                var bitcoinAsset = new Asset
+                {
+                    name = "Bitcoin",
+                    abbreviation = "BTC",
+                    price = 50000,
+                    astro_price = 0.625m,
+                    tokens = 0,
+                    account_id = account.account_id
+                };
+
+                var ethereumAsset = new Asset
+                {
+                    name = "Ethereum",
+                    abbreviation = "ETH",
+                    price = 32000,
+                    astro_price = 0.4m,
+                    tokens = 0,
+                    account_id = account.account_id
+                };
+
+                _context.Assets.AddRange(bitcoinAsset, ethereumAsset);
+                await _context.SaveChangesAsync();
+
+
+                // Create Astro record
+                var astro = new Astro
+                {
+                    name = "Astro",
+                    abbreviation = "AST",
+                    price = 80000,
+                    tokens = 0,
+                    account_id = account.account_id
+                };
+
+                _context.Astros.Add(astro);
+                await _context.SaveChangesAsync();
+
+                // Send OTP via email
                 await _emailSender.SendEmailAsync(user.email, $"Your OTP is {user.Otp}. It will expire in 5 min.", "OTP for Astro Registration"); //sending otp via email
 
                 // return Ok("Registration successful. Please verify your OTP.");

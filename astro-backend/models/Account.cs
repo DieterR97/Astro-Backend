@@ -26,9 +26,12 @@ public class Account
     public int user_id { get; set; }
     public int account_status_id { get; set; }
 
+    public int total_transactions { get; set; }
+
     //navigation property
     //this user value is only one user - which is why we say User datatype
     public User? User { get; set; }
+    public Astro? Astro { get; set; }
     public Status? Status { get; set; }
 
     public ICollection<Transaction>? TransactionsFrom { get; set; }
@@ -38,7 +41,7 @@ public class Account
 
     public decimal GetTotalBalance()
     {
-        return Assets.Sum(asset => asset.price * asset.amount);
+        return Assets.Sum(asset => asset.price * asset.tokens);
     }
 
 }

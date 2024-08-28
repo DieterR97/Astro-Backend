@@ -5,11 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace astro_backend.models;
 
 
-public class Asset
+public class Astro
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int asset_id { get; set; }
+    public int astro_id { get; set; }
 
     [Required]
     public string name { get; set; }
@@ -21,10 +21,8 @@ public class Asset
     // [Column(TypeName = "decimal(18, 2)")]
     public decimal price { get; set; }
 
-    public decimal astro_price { get; set; }
-
     [Required]
-    public decimal tokens { get; set; } // The quantity of the asset owned
+    public decimal tokens { get; set; } // The quantity owned
 
     // Foreign key for Account
     public int account_id { get; set; }
@@ -32,3 +30,5 @@ public class Asset
     // Navigation property back to Account
     public Account Account { get; set; }
 }
+
+

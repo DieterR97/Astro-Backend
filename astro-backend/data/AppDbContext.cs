@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<User_security> User_securitys { get; set; }
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<Astro> Astros { get; set; }
 
     //build relationships between our tables/entities
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,6 +61,12 @@ public class AppDbContext : DbContext
             .HasMany(a => a.Assets)
             .WithOne(a => a.Account)
             .HasForeignKey(a => a.account_id);
+
+        // Account to Astro: One-to-One
+        modelBuilder.Entity<Account>()
+            .HasOne(account => account.Astro)
+            .WithOne(astro => astro.Account)
+            .HasForeignKey<Astro>(astro => astro.account_id);
     }
 
 }
