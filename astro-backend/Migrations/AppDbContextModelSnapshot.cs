@@ -39,6 +39,9 @@ namespace astro_backend.Migrations
                     b.Property<decimal>("balance")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("total_transactions")
+                        .HasColumnType("integer");
+
                     b.Property<int>("user_id")
                         .HasColumnType("integer");
 
@@ -67,7 +70,7 @@ namespace astro_backend.Migrations
                     b.Property<int>("account_id")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("amount")
+                    b.Property<decimal>("astro_price")
                         .HasColumnType("numeric");
 
                     b.Property<string>("name")
@@ -75,13 +78,49 @@ namespace astro_backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<decimal>("price")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("tokens")
+                        .HasColumnType("numeric");
 
                     b.HasKey("asset_id");
 
                     b.HasIndex("account_id");
 
                     b.ToTable("Assets");
+                });
+
+            modelBuilder.Entity("astro_backend.models.Astro", b =>
+                {
+                    b.Property<int>("astro_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("astro_id"));
+
+                    b.Property<string>("abbreviation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("account_id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("price")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("tokens")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("astro_id");
+
+                    b.HasIndex("account_id")
+                        .IsUnique();
+
+                    b.ToTable("Astros");
                 });
 
             modelBuilder.Entity("astro_backend.models.Authentication_log", b =>
@@ -272,6 +311,17 @@ namespace astro_backend.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("astro_backend.models.Astro", b =>
+                {
+                    b.HasOne("astro_backend.models.Account", "Account")
+                        .WithOne("Astro")
+                        .HasForeignKey("astro_backend.models.Astro", "account_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("astro_backend.models.Authentication_log", b =>
                 {
                     b.HasOne("astro_backend.models.User", "User")
@@ -316,6 +366,8 @@ namespace astro_backend.Migrations
             modelBuilder.Entity("astro_backend.models.Account", b =>
                 {
                     b.Navigation("Assets");
+
+                    b.Navigation("Astro");
 
                     b.Navigation("TransactionsFrom");
 
