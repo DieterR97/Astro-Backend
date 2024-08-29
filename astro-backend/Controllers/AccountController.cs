@@ -123,6 +123,27 @@ namespace astro_backend.Controllers
             return NoContent();
         }
 
+        [HttpPut("accountId")]
+        public async Task<IActionResult> ToggleActive(int accountId) {
+
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.account_id == accountId);
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            var currentactivestate = account.active;
+
+            account.active = !currentactivestate;
+            
+            _context.Accounts.Update(account);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+
+        }
+
         public class UpgradeAccountStatusRequest
         {
             public int accountId { get; set; }
