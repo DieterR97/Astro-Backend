@@ -110,7 +110,6 @@ namespace astro_backend.Controllers
         {
             var user = await _context.Users
                                       .Include(u => u.Account)
-                                      .ThenInclude(a => a.Assets) // Including assets to calculate balance
                                       .Include(u => u.Account.Status)
                                       .Include(u => u.Account.TransactionsFrom)
                                       .Include(u => u.Account.TransactionsTo)
@@ -122,18 +121,14 @@ namespace astro_backend.Controllers
                 return NotFound();
             }
 
-            // Calculate the total balance based on both assets and Astro tokens
-            var totalAssetBalance = user.Account.Assets.Sum(asset => asset.price * asset.tokens);
-            var totalAstroBalance = user.Account.Astro != null ? user.Account.Astro.tokens * user.Account.Astro.tokens : 0;
+            // Calculate the total Astro token balance only
+            var totalAstroBalance = user.Account.Astro != null ? user.Account.Astro.tokens * user.Account.Astro.price : 0;
 
-            user.Account.balance = totalAssetBalance + totalAstroBalance;
+            user.Account.balance = totalAstroBalance;
 
             // Save the updated balance to the database
             _context.Accounts.Update(user.Account);
             await _context.SaveChangesAsync();
-
-            // Combine TransactionsFrom and TransactionsTo into one Transactions list
-            var allTransactions = user.Account.TransactionsFrom.Concat(user.Account.TransactionsTo).ToList();
 
             // Return the user data as a DTO
             var userDto = new UserDto
@@ -164,20 +159,14 @@ namespace astro_backend.Controllers
                         Price = user.Account.Astro.price,
                         Tokens = user.Account.Astro.tokens
                     } : null,
-                    Assets = user.Account.Assets.Select(asset => new AssetDto
-                    {
-                        AssetId = asset.asset_id,
-                        Name = asset.name,
-                        Abbreviation = asset.abbreviation,
-                        Price = asset.price,
-                        Tokens = asset.tokens
-                    }).ToList(),
-                     Transactions = allTransactions
+                    TransactionsFrom = user.Account.TransactionsFrom.ToList(),
+                    TransactionsTo = user.Account.TransactionsTo.ToList()
                 }
             };
 
             return userDto;
         }
+
 
 
 

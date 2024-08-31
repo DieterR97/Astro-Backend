@@ -13,7 +13,8 @@ public class AccountDto
     public decimal Balance { get; set; }
     public bool Active { get; set; }
     public int Account_status_id { get; set; }
-    public List<Transaction>? Transactions { get; set; }
+    public List<Transaction>? TransactionsTo { get; set; }
+    public List<Transaction>? TransactionsFrom { get; set; }
     public List<AssetDto>? Assets { get; set; }
     public StatusDto? Status { get; set; }
     public AstroDto? Astro {get; set;}
