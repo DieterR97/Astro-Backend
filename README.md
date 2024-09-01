@@ -3,7 +3,7 @@
 <h5 align="center" style="padding:0;margin:0;">221122 | 221147 | 221302 | 221326 | 21100366</h5>
 <h6 align="center">Interactive Development 300</h6>
 <p align="center">
-    <img src="react-app/src/assets/Logo.jpg" alt="Logo" width="80" height="80">
+    <img src="astro-backend/assets/Logo.jpg" alt="Logo" width="80" height="80">
   <h3 align="center">Astro</h3>
   <p align="center">
     Cross-Platform Desktop Development <br>
@@ -47,7 +47,7 @@
 <!--PROJECT DESCRIPTION-->
 ## About the Project
 <!-- header image of project -->
-![Mockup1](react-app/src/assets/mockup_one.jpg)
+![Mockup1](astro-backend/assets/mockup_one.jpg)
 
 ### Project Description
 
@@ -102,27 +102,27 @@ Get front-end at [https://github.com/DieterR97/Astro](https://github.com/DieterR
 <!-- You can add the links to all of your imagery at the bottom of the file as references -->
 ## Features and Functionality
 
-![Authentication](react-app/src/assets/Authentication.jpg)
+![Authentication](astro-backend/assets/Authentication.jpg)
 ### Authentication
 
 The account holders user must create an account/profile so that they can log on to and out of the app. Administering users should be able to log on to the system. Both the client and the admin users will need to be authenticated with 2-Factor authentication.
 
-![Account](react-app/src/assets/Overview.jpg)
+![Account](astro-backend/assets/Overview.jpg)
 ### Accounts
 
 The account holders user should be able to view and edit their bank account information, view their account balance and status, and view a summary of their transactions. Their account’s status level is based on the amount of tokens, which has allows for better interest rates and lower transaction fees.
 
-![Pjrchasings](react-app/src/assets/Purchasing_Currency.jpg)
+![Purchasings](astro-backend/assets/Purchasing_Currency.jpg)
 ### Purchasing
 
 Users should be able to purchase one currency. Users should be able to display current exchange rates of the available currency and confirm the purchase and update the user's balance accordingly.
 
-![Transactions](react-app/src/assets/Transactions.jpg)
+![Transactions](astro-backend/assets/Transactions.jpg)
 ### Transactions
 
 The account holders user should be able to see all of their past transactions as well as perform new transactions. These transactions include the purchasing of new tokens, the withdrawal of tokens and the transferring of tokens.
 
-![Admin Portal](react-app/src/assets/Admin_Portal.jpg)
+![Admin Portal](astro-backend/assets/Admin_Portal.jpg)
 ### Admin Portal
 
 Admin users should be able to view all of the account holders and their respective transaction history. The admin user should also be able to freeze an account.
@@ -135,19 +135,19 @@ The `Conceptual Process` is the set of actions, activities and research that was
 
 ### Ideation
 
-![Moodboard](react-app/src/assets/Moodboard.jpg)
+![Moodboard](astro-backend\assets\Moodboard.jpg)
 
 ### Wireframes
 
-![Wireframe1](react-app/src/assets/Wireframe1.jpg)![Wireframe2](react-app/src/assets/Wireframe2.jpg)![Wireframe3](react-app/src/assets/Wireframe3.jpg)![Wireframe4](react-app/src/assets/Wireframe4.jpg)![Wireframe5](react-app/src/assets/Wireframe5.jpg)![Wireframe6](react-app/src/assets/Wireframe6.jpg)![Wireframe7](react-app/src/assets/Wireframe7.jpg)![Wireframe8](react-app/src/assets/Wireframe8.jpg)![Wireframe9](react-app/src/assets/Wireframe9.jpg)![Wireframe10](react-app/src/assets/Wireframe10.jpg)
+![Wireframe1](astro-backend\assets\Wireframe1.jpg)![Wireframe2](astro-backend\assets\Wireframe2.jpg)![Wireframe3](astro-backend\assets\Wireframe3.jpg)![Wireframe4](astro-backend\assets\Wireframe4.jpg)![Wireframe5](astro-backend\assets\Wireframe5.jpg)![Wireframe6](astro-backend\assets\Wireframe6.jpg)![Wireframe7](astro-backend\assets\Wireframe7.jpg)![Wireframe8](astro-backend\assets\Wireframe8.jpg)![Wireframe9](astro-backend\assets\Wireframe9.jpg)![Wireframe10](astro-backend\assets\Wireframe10.jpg)
 
 ### ER Diagram
 
-![ER Diagram](react-app/src/assets/ER%20Diagram.jpg)
+![ER Diagram](astro-backend\assets\ER%20Diagram.jpg)
 
 ### User-flow
 
-![User Flow](react-app/src/assets/User%20Flow.jpg)
+![User Flow](astro-backend\assets\User%20Flow.jpg)
 
 <!-- DEVELOPMENT PROCESS -->
 ## Development Process
@@ -179,9 +179,9 @@ The `Development Process` is the technical implementations and functionality don
 
 ### Mockups
 
-![Mockup2](react-app/src/assets/mockup_two.png)
+![Mockup2](astro-backend\assets\mockup_two.png)
 <br>
-![Mockup3](react-app/src/assets/mockup_three.jpg)
+![Mockup3](astro-backend\assets\mockup_three.jpg)
 
 <!-- VIDEO DEMONSTRATION -->
 ### Video Demonstration
