@@ -135,6 +135,7 @@ namespace astro_backend.Controllers
             {
                 Username = user.username,
                 Email = user.email,
+                Role = user.role,
                 Account = new AccountDto
                 {
                     AccountId = user.Account.account_id,

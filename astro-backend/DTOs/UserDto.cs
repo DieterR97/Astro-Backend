@@ -4,6 +4,7 @@ public class UserDto
 {
     public string Username { get; set; }
     public string Email { get; set; }
+    public string Role { get; set; }
     public AccountDto Account { get; set; }
 }
 
@@ -13,8 +14,8 @@ public class AccountDto
     public decimal Balance { get; set; }
     public bool Active { get; set; }
     public int Account_status_id { get; set; }
-    public List<Transaction>? TransactionsTo { get; set; }
-    public List<Transaction>? TransactionsFrom { get; set; }
+    public ICollection<Transaction>? TransactionsTo { get; set; }
+    public ICollection<Transaction>? TransactionsFrom { get; set; }
     public List<AssetDto>? Assets { get; set; }
     public StatusDto? Status { get; set; }
     public AstroDto? Astro {get; set;}

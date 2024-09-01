@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("astro-backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+414cd240ec03dabab838ada370e9926317cb502d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aaa507f1c3407e2e8de8b1ae9bb0e0e31d866388")]
 [assembly: System.Reflection.AssemblyProductAttribute("astro-backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("astro-backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
