@@ -109,28 +109,53 @@ namespace astro_backend.Controllers
         public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
         {
             var user = await _context.Users
-                                      .Include(u => u.Account)
-                                      .Include(u => u.Account.Status)
-                                      .Include(u => u.Account.TransactionsFrom)
-                                      .Include(u => u.Account.TransactionsTo)
-                                      .Include(u => u.Account.Astro)
-                                      .FirstOrDefaultAsync(u => u.email == email);
+                                     .Include(u => u.Account)
+                                         .ThenInclude(acc => acc.Status)
+                                     .Include(u => u.Account)
+                                         .ThenInclude(acc => acc.TransactionsFrom)
+                                     .Include(u => u.Account)
+                                         .ThenInclude(acc => acc.TransactionsTo)
+                                     .Include(u => u.Account)
+                                         .ThenInclude(acc => acc.Astro)
+                                     .FirstOrDefaultAsync(u => u.email == email);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Calculate the total Astro token balance only
+            // Calculate the total Astro token balance
             var totalAstroBalance = user.Account.Astro != null ? user.Account.Astro.tokens * user.Account.Astro.price : 0;
-
             user.Account.balance = totalAstroBalance;
 
-            // Save the updated balance to the database
+            // Update and save the account balance
             _context.Accounts.Update(user.Account);
             await _context.SaveChangesAsync();
 
-            // Return the user data as a DTO
+            // Mapping transactions to TransactionDto
+            var transactionsFromDtos = user.Account.TransactionsFrom
+                .Select(t => new TransactionDto
+                {
+                    TransactionId = t.transaction_id,
+                    TransactionType = t.transaction_type,
+                    Amount = t.amount,
+                    Timestamp = t.timestamp,
+                    FromAccountId = t.from_account_id,
+                    ToAccountId = t.to_account_id
+                }).ToList();
+
+            var transactionsToDtos = user.Account.TransactionsTo
+                .Select(t => new TransactionDto
+                {
+                    TransactionId = t.transaction_id,
+                    TransactionType = t.transaction_type,
+                    Amount = t.amount,
+                    Timestamp = t.timestamp,
+                    FromAccountId = t.from_account_id,
+                    ToAccountId = t.to_account_id
+                }).ToList();
+
+            // Prepare the UserDto with AccountDto including TransactionDtos
             var userDto = new UserDto
             {
                 Username = user.username,
@@ -151,7 +176,7 @@ namespace astro_backend.Controllers
                         AnnualInterestRate = user.Account.Status.annual_interest_rate,
                         TransactionFee = user.Account.Status.transaction_fee
                     } : null,
-                    TotalTransactions = user.Account.total_transactions,
+                    TotalTransactions = user.Account.TransactionsFrom.Count + user.Account.TransactionsTo.Count,
                     Astro = user.Account.Astro != null ? new AstroDto
                     {
                         AstroId = user.Account.Astro.astro_id,
@@ -160,13 +185,14 @@ namespace astro_backend.Controllers
                         Price = user.Account.Astro.price,
                         Tokens = user.Account.Astro.tokens
                     } : null,
-                    TransactionsFrom = user.Account.TransactionsFrom.ToList(),
-                    TransactionsTo = user.Account.TransactionsTo.ToList()
+                    TransactionsFrom = transactionsFromDtos,
+                    TransactionsTo = transactionsToDtos,
                 }
             };
 
-            return userDto;
+            return Ok(userDto);
         }
+
 
 
 
