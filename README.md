@@ -135,19 +135,19 @@ The `Conceptual Process` is the set of actions, activities and research that was
 
 ### Ideation
 
-![Moodboard](astro-backend\assets\Moodboard.jpg)
+![Moodboard](astro-backend/assets/Moodboard.jpg)
 
 ### Wireframes
 
-![Wireframe1](astro-backend\assets\Wireframe1.jpg)![Wireframe2](astro-backend\assets\Wireframe2.jpg)![Wireframe3](astro-backend\assets\Wireframe3.jpg)![Wireframe4](astro-backend\assets\Wireframe4.jpg)![Wireframe5](astro-backend\assets\Wireframe5.jpg)![Wireframe6](astro-backend\assets\Wireframe6.jpg)![Wireframe7](astro-backend\assets\Wireframe7.jpg)![Wireframe8](astro-backend\assets\Wireframe8.jpg)![Wireframe9](astro-backend\assets\Wireframe9.jpg)![Wireframe10](astro-backend\assets\Wireframe10.jpg)
+![Wireframe1](astro-backend/assets/Wireframe1.jpg)![Wireframe2](astro-backend/assets/Wireframe2.jpg)![Wireframe3](astro-backend/assets/Wireframe3.jpg)![Wireframe4](astro-backend/assets/Wireframe4.jpg)![Wireframe5](astro-backend/assets/Wireframe5.jpg)![Wireframe6](astro-backend/assets/Wireframe6.jpg)![Wireframe7](astro-backend\assets\Wireframe7.jpg)![Wireframe8](astro-backend/assets/Wireframe8.jpg)![Wireframe9](astro-backend\assets\Wireframe9.jpg)![Wireframe10](astro-backend/assets/Wireframe10.jpg)
 
 ### ER Diagram
 
-![ER Diagram](astro-backend\assets\ER%20Diagram.jpg)
+![ER Diagram](astro-backend/assets/ER%20Diagram.jpg)
 
 ### User-flow
 
-![User Flow](astro-backend\assets\User%20Flow.jpg)
+![User Flow](astro-backend/assets/User%20Flow.jpg)
 
 <!-- DEVELOPMENT PROCESS -->
 ## Development Process
@@ -179,9 +179,9 @@ The `Development Process` is the technical implementations and functionality don
 
 ### Mockups
 
-![Mockup2](astro-backend\assets\mockup_two.png)
+![Mockup2](astro-backend/assets/mockup_two.png)
 <br>
-![Mockup3](astro-backend\assets\mockup_three.jpg)
+![Mockup3](astro-backend/assets/mockup_three.jpg)
 
 <!-- VIDEO DEMONSTRATION -->
 ### Video Demonstration
