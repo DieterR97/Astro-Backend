@@ -206,5 +206,101 @@ namespace astro_backend.Controllers
             public decimal TokensToWithdraw { get; set; }
         }
 
+
+        [HttpGet("available-users")]
+        public async Task<IActionResult> GetAvailableUsers(string email)
+        {
+            var users = await _context.Users
+                                    .Where(u => u.email != email)
+                                    .Select(u => new { u.username, u.email })
+                                    .ToListAsync();
+
+            if (users == null || !users.Any())
+            {
+                return NotFound("No other users found.");
+            }
+
+            return Ok(users);
+        }
+
+        [HttpPost("make-payment")]
+        public async Task<IActionResult> MakePayment([FromBody] MakePaymentRequest request)
+        {
+            // Get the sender's account
+            var sender = await _context.Users
+                                    .Include(u => u.Account)
+                                    .ThenInclude(a => a.Astro)
+                                    .SingleOrDefaultAsync(u => u.email == request.SenderEmail);
+
+            if (sender == null || sender.Account == null || sender.Account.Astro == null)
+            {
+                return NotFound("Sender not found or account information is missing.");
+            }
+
+            // Get the recipient's account
+            var recipient = await _context.Users
+                                    .Include(u => u.Account)
+                                    .ThenInclude(a => a.Astro)
+                                    .SingleOrDefaultAsync(u => u.email == request.RecipientEmail);
+
+            if (recipient == null || recipient.Account == null || recipient.Account.Astro == null)
+            {
+                return NotFound("Recipient not found or account information is missing.");
+            }
+
+            // Calculate the transaction fee based on the sender's account status
+            var status = await _context.Statuss.SingleOrDefaultAsync(s => s.status_id == sender.Account.account_status_id);
+            if (status == null)
+            {
+                return NotFound("Sender's account status not found.");
+            }
+
+            decimal transactionFee = status.transaction_fee;
+            decimal totalTokensRequired = request.Tokens + transactionFee;
+
+            // Check if the sender has enough tokens
+            if (sender.Account.Astro.tokens < totalTokensRequired)
+            {
+                return BadRequest("Insufficient tokens to cover the payment and transaction fee.");
+            }
+
+            // Deduct tokens from the sender
+            sender.Account.Astro.tokens -= totalTokensRequired;
+
+            // Add tokens to the recipient
+            recipient.Account.Astro.tokens += request.Tokens;
+
+            // Update account balances
+            decimal tokenPrice = 80000;
+            sender.Account.balance = sender.Account.Astro.tokens * tokenPrice;
+            recipient.Account.balance = recipient.Account.Astro.tokens * tokenPrice;
+
+            // Record the transaction
+            int maxTransactionId = await _context.Transactions.MaxAsync(t => t.transaction_id);
+            var transaction = new Transaction
+            {
+                transaction_id = maxTransactionId + 1,
+                transaction_type = "Transaction",
+                amount = request.Tokens * tokenPrice,
+                timestamp = DateTime.UtcNow,
+                from_account_id = sender.Account.account_id,
+                to_account_id = recipient.Account.account_id
+            };
+
+            _context.Transactions.Add(transaction);
+            await _context.SaveChangesAsync();
+
+            // Return the updated Astro tokens for the sender
+            return Ok(new { message = "Payment successful", updatedTokens = sender.Account.Astro.tokens });
+        }
+
+        public class MakePaymentRequest
+        {
+            public string SenderEmail { get; set; }
+            public string RecipientEmail { get; set; }
+            public decimal Tokens { get; set; }
+        }
+
+
     }
 }
