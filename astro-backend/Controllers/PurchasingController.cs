@@ -128,8 +128,70 @@ namespace astro_backend.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok("Transaction confirmed and Astro record updated");
+            // Return the updated Astro tokens to the frontend
+            return Ok(new { message = "Transaction confirmed and Astro record updated", updatedTokens = astro.tokens });
         }
+
+        [HttpPost("withdraw-astro-tokens")]
+        public async Task<IActionResult> WithdrawAstroTokens([FromBody] WithdrawAstroTokensRequest request)
+        {
+            var user = await _context.Users
+                                    .Include(u => u.Account)
+                                    .ThenInclude(a => a.Astro)
+                                    .SingleOrDefaultAsync(u => u.email == request.Email);
+
+            if (user == null) return NotFound("User not found");
+            if (user.Account == null) return NotFound("Account not found");
+
+            var astro = user.Account.Astro;
+            if (astro == null) return NotFound("Astro record not found");
+
+            // Calculate the transaction fee based on the user's account status
+            var status = await _context.Statuss.SingleOrDefaultAsync(s => s.status_id == user.Account.account_status_id);
+            if (status == null) return NotFound("Status not found");
+
+            // Calculate the total tokens required (tokens to withdraw + transaction fee)
+            decimal transactionFee = status.transaction_fee;
+            decimal totalTokensRequired = request.TokensToWithdraw + transactionFee;
+
+            // Check if the user has enough tokens to cover the withdrawal and the fee
+            if (astro.tokens < totalTokensRequired)
+            {
+                return BadRequest("Insufficient tokens to cover the withdrawal and transaction fee.");
+            }
+
+            // Deduct the tokens (including the fee) from the user's account
+            astro.tokens -= totalTokensRequired;
+
+            // Calculate the withdrawal amount in currency
+            decimal tokenPrice = 80000;
+            decimal withdrawalAmount = request.TokensToWithdraw * tokenPrice;
+
+            // Find the current max transaction_id
+            int maxTransactionId = await _context.Transactions.MaxAsync(t => t.transaction_id);
+
+            // Add a new transaction record for the withdrawal
+            var transaction = new Transaction
+            {
+                transaction_id = maxTransactionId + 1,
+                transaction_type = "Withdrawal",
+                amount = withdrawalAmount,
+                timestamp = DateTime.UtcNow,
+                from_account_id = user.Account.account_id,
+                to_account_id = user.Account.account_id
+            };
+
+            _context.Transactions.Add(transaction);
+
+            // Update the user's account balance
+            user.Account.balance = astro.tokens * tokenPrice;
+
+            await _context.SaveChangesAsync();
+
+            // Return the updated Astro tokens to the frontend
+            return Ok(new { message = "Withdrawal successful and Astro record updated", updatedTokens = astro.tokens });
+        }
+
 
 
         public class ConfirmTransactionRequest
@@ -137,5 +199,12 @@ namespace astro_backend.Controllers
             public string Email { get; set; }
             public decimal TokensPurchased { get; set; }
         }
+
+        public class WithdrawAstroTokensRequest
+        {
+            public string Email { get; set; }
+            public decimal TokensToWithdraw { get; set; }
+        }
+
     }
 }
